@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antojitos Génesis - Calculadora</title>
+
+    <!-- ====================================================
+         ESTILOS VISUALES (COLORES Y DISEÑO)
+         ==================================================== -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FDFBF7;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #D32F2F;
+            margin: 5px 0 0 0;
+            font-size: 24px;
+        }
+        p {
+            text-align: center;
+            margin: 0 0 10px 0;
+            color: #7F8C8D;
+            font-size: 12px;
+        }
+        /* Pantalla digital verde de la calculadora */
+        #pantalla {
+            background-color: #2C3E50;
+            color: #2ECC71;
+            font-family: monospace;
+            font-size: 36px;
+            font-weight: bold;
+            text-align: right;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        /* Cuadrícula de 2 columnas para los botones */
+        #grid-productos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            flex-grow: 1;
+        }
+        /* Diseño base de los botones de productos */
+        .btn-producto {
+            background-color: #FFFFFF;
+            color: #2C3E50;
+            border: 2px solid #BDC3C7;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #BDC3C7;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .btn-producto:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+        .precio {
+            color: #D32F2F;
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        /* CAMBIO DE COLOR DE BOTONES CUANDO SE ACTIVA EL SWITCH DE MEDIA ORDEN */
+        body.modo-media-activo .btn-producto {
+            background-color: #FFE5D9; /* Naranja claro */
+            border-color: #E67E22;
+        }
+        body.modo-media-activo .precio {
+            color: #D35400; /* Naranja oscuro para el precio */
+        }
+
+        /* Botonera de la parte inferior */
+        .area-controles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-control {
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 15px;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+        }
+        #btn-media {
+            background-color: #7F8C8D;
+            box-shadow: 0 4px 0 #616A6B;
+        }
+        #btn-media.activo {
+            background-color: #E67E22;
+            box-shadow: 0 4px 0 #D35400;
+        }
+        #btn-borrar {
+            background-color: #E74C3C;
+            box-shadow: 0 4px 0 #C0392B;
+        }
+        .btn-control:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Antojitos Génesis</h1>
+    <p>Punto de Venta Móvil (Offline)</p>
+
+    <div id="pantalla">$0.00</div>
+
+    <!-- =========================================================================================
+         BOTONES DE PRODUCTOS
+         Explicación de los atributos:
+         - data-precio-completo: Precio normal/completo.
+         - data-precio-medio: Precio cuando el switch ½ ORDEN está activo.
+         ========================================================================================= -->
+        <!-- =========================================================================================
+         BOTONES DE PRODUCTOS ACTUALIZADOS CON LA PIZARRA DE HOY
+         ========================================================================================= -->
+    <div id="grid-productos">
+        <!-- Productos individuales de $20 (No les afecta la media orden) -->
+        <button class="btn-producto" data-precio-completo="25" data-precio-medio="25" onclick="procesarSuma(this)">Tamales Corrientes <span class="precio">$25</span></button>
+        <button class="btn-producto" data-precio-completo="25" data-precio-medio="25" onclick="procesarSuma(this)">Chiles Rellenos <span class="precio">$25</span></button>
+        <button class="btn-producto" data-precio-completo="25" data-precio-medio="25" onclick="procesarSuma(this)">Patitas Capeadas <span class="precio">$25</span></button>
+        <button class="btn-producto" data-precio-completo="20" data-precio-medio="20" onclick="procesarSuma(this)">Gorditas Chicharrón <span class="precio">$20</span></button>
+        
+        <!-- Órdenes de $30 (Con media orden a $18) -->
+        <button class="btn-producto" data-precio-completo="30" data-precio-medio="18" onclick="procesarSuma(this)">Tacos Dorados <span class="precio">$30</span></button>
+        <button class="btn-producto" data-precio-completo="30" data-precio-medio="18" onclick="procesarSuma(this)">Orden Enmoladas <span class="precio">$30</span></button>
+        <button class="btn-producto" data-precio-completo="30" data-precio-medio="18" onclick="procesarSuma(this)">Orden Tostadas <span class="precio">$30</span></button>
+        <button class="btn-producto" data-precio-completo="30" data-precio-medio="18" onclick="procesarSuma(this)">Orden Molotes <span class="precio">$30</span></button>
+        
+        <!-- Chicharrón preparado (Media orden a $15) -->
+        <button class="btn-producto" data-precio-completo="35" data-precio-medio="18" onclick="procesarSuma(this)" style="grid-column: span 2;">Chicharrones Prep. <span class="precio">$35</span></button>
+        
+        <!-- Bebidas y Postre -->
+        <button class="btn-producto" data-precio-completo="35" data-precio-medio="35" onclick="procesarSuma(this)">Agua Horchata 1L <span class="precio">$35</span></button>
+        <button class="btn-producto" data-precio-completo="35" data-precio-medio="35" onclick="procesarSuma(this)">Atole Morado 1L <span class="precio">$35</span></button>
+        <button class="btn-producto" data-precio-completo="18" data-precio-medio="18" onclick="procesarSuma(this)">Agua Horchata 1/2 L <span class="precio">$18</span></button>
+        <button class="btn-producto" data-precio-completo="18" data-precio-medio="18" onclick="procesarSuma(this)">Atole Morado 1/2L <span class="precio">$18</span></button>
+        <button class="btn-producto" data-precio-completo="25" data-precio-medio="25" onclick="procesarSuma(this)" style="grid-column: span 2; background-color: #FEF9E7;">Pastel <span class="precio">$25</span></button>
+    </div>
+
+
+    <!-- Botones de Control -->
+    <div class="area-controles">
+        <button id="btn-media" class="btn-control" onclick="alternarSwitchMedia()">½ ORDEN (OFF)</button>
+        <button id="btn-borrar" class="btn-control" onclick="borrar()">BORRAR TODO (C)</button>
+    </div>
+
+    <!-- ====================================================
+         CÓDIGO DE LÓGICA Y SUMAS (JAVASCRIPT)
+         ==================================================== -->
+    <script>
+        let total = 0;
+        let modoMediaOrden = false; // Estado del switch
+        
+        const pantalla = document.getElementById('pantalla');
+        const btnMedia = document.getElementById('btn-media');
+        const listaBotones = document.querySelectorAll('.btn-producto');
+
+        // Refresca la pantalla verde con el total actual
+        function actualizarPantalla() {
+            pantalla.innerText = '$' + total.toFixed(2);
+        }
+
+        // Función del SWITCH: Cambia los precios visibles y la paleta de colores
+        function alternarSwitchMedia() {
+            modoMediaOrden = !modoMediaOrden;
+            
+            if (modoMediaOrden) {
+                btnMedia.classList.add('activo');
+                btnMedia.innerText = '½ ORDEN (ON)';
+                document.body.classList.add('modo-media-activo');
+            } else {
+                btnMedia.classList.remove('activo');
+                btnMedia.innerText = '½ ORDEN (OFF)';
+                document.body.classList.remove('modo-media-activo');
+            }
+
+            // Actualiza el texto de los precios dentro de los botones en tiempo real
+            listaBotones.forEach(boton => {
+                const spanPrecio = boton.querySelector('.precio');
+                if (modoMediaOrden) {
+                    const precioMedio = boton.getAttribute('data-precio-medio');
+                    spanPrecio.innerText = '$' + precioMedio;
+                } else {
+                    const precioCompleto = boton.getAttribute('data-precio-completo');
+                    spanPrecio.innerText = '$' + precioCompleto;
+                }
+            });
+        }
+
+        // Realiza la suma según el modo activo
+        function procesarSuma(elemento) {
+            let precioAAgregar = 0;
+
+            if (modoMediaOrden) {
+                precioAAgregar = parseFloat(elemento.getAttribute('data-precio-medio'));
+            } else {
+                precioAAgregar = parseFloat(elemento.getAttribute('data-precio-completo'));
+            }
+
+            total += precioAAgregar;
+            actualizarPantalla();
+        }
+
+        // Reinicia la cuenta a cero y desactiva el switch
+        function borrar() {
+            total = 0;
+            if (modoMediaOrden) {
+                alternarSwitchMedia(); // Apaga el switch y restaura precios normales
+            }
+            actualizarPantalla();
+        }
+    </script>
+</body>
+</html>
