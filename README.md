@@ -1,4 +1,7 @@
 # Antojitos-genesis-calculadora
+
+[Ver calculadora en línea](https://josuepelcastre.github.io/Antojitos-genesis-calculadora/)
+
 punto de venta móvil sencillo para la gestión de pedidos y el cálculo de importes.
 
 # Descripción
